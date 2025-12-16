@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'UserEdit.dart';
-
+import 'db.dart';
 class UserList extends StatefulWidget {
   const UserList({super.key});
 
@@ -9,11 +9,22 @@ class UserList extends StatefulWidget {
 }
 
 class _UserListState extends State<UserList> {
-  List<Map<String, dynamic>> list = [
-    {"userId" : "hong", "name" : "홍길동", "age" : 30},
-    {"userId" : "kim", "name" : "김철수", "age" : 25},
-    {"userId" : "park", "name" : "박영희", "age" : 20}
-  ];
+  List<Map<String, dynamic>> list = [];
+
+  Future<void> _selectUserList() async{
+    var userList = await DB.selectUser();
+    setState(() {
+      list = userList;
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _selectUserList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,8 +41,11 @@ class _UserListState extends State<UserList> {
                 children: [
                   IconButton(
                       onPressed: () async {
-                         Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => UserEdit(name: user["name"], age: user["age"]),));
+                         bool flg = await Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => UserEdit(userId: user["userId"]),));
+                         if(flg){
+                           _selectUserList();
+                         }
                       },
                       icon: Icon(Icons.edit)
                   ),
@@ -42,10 +56,14 @@ class _UserListState extends State<UserList> {
                           builder: (context) {
                             return AlertDialog(
                               title : Text("삭제"),
-                              content: Text("${user["NAME"]}님을 정말 삭제 하실거?"),
+                              content: Text("${user["name"]}님을 정말 삭제 하실거?"),
                               actions: [
                                 TextButton(
-                                    onPressed: (){},
+                                    onPressed: () async {
+                                      await DB.deleteUser(user["userId"]);
+                                      Navigator.of(context).pop();
+                                      _selectUserList();
+                                    },
                                     child: Text("삭제")
                                 ),
                                 TextButton(

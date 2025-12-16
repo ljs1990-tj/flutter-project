@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-
+import 'db.dart';
 
 class UserEdit extends StatefulWidget {
-  final String? name;
-  final int? age;
-  UserEdit({super.key, this.name, this.age});
+  final int? userId;
+  UserEdit({super.key, this.userId});
 
   @override
   State<UserEdit> createState() => _UserEditState();
@@ -14,12 +13,22 @@ class _UserEditState extends State<UserEdit> {
   TextEditingController nameCtrl = TextEditingController();
   TextEditingController ageCtrl = TextEditingController();
 
+  Future<void> _selectUser() async{
+    var user = await DB.getUser(widget.userId!);
+    print(user[0]); // user.first
+    print(user.first);
+    var info = user.first;
+    setState(() {
+      nameCtrl.text = info["name"];
+      ageCtrl.text = info["age"].toString();
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    nameCtrl.text = widget.name!;
-    ageCtrl.text = widget.age!.toString();
+    _selectUser();
   }
 
   @override
@@ -46,7 +55,10 @@ class _UserEditState extends State<UserEdit> {
               ),
               SizedBox(height: 20,),
               ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () async {
+                    DB.updateUser(widget.userId!, nameCtrl.text, int.tryParse(ageCtrl.text)!);
+                    Navigator.pop(context, true);
+                  },
                   child: Text("수정")
               )
             ],

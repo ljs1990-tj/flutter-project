@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'UserList.dart';
+import 'db.dart';
 
 void main() => runApp(UserInsert());
 
@@ -58,7 +59,15 @@ class _UserInsertExamState extends State<UserInsertExam> {
               ),
               SizedBox(height: 20,),
               ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () async {
+                    String name = nameCtrl.text;
+                    int age = int.tryParse(ageCtrl.text) ?? 0;
+                    await DB.insertUser(name, age);
+
+                    nameCtrl.clear();
+                    ageCtrl.clear();
+
+                  },
                   child: Text("사용자 추가")
               )
             ],
