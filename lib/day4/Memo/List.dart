@@ -1,28 +1,22 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: ListScreen(),
-    );
+    return ListScreen();
   }
 }
 
-class ListScreen extends StatelessWidget {
+class ListScreen extends StatefulWidget {
   const ListScreen({super.key});
 
+  @override
+  State<ListScreen> createState() => _ListScreenState();
+}
+
+class _ListScreenState extends State<ListScreen> {
   // 샘플 데이터
   final List<Map<String, dynamic>> list = const [
     {
